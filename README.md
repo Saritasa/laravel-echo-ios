@@ -38,6 +38,12 @@ e.connected(){ data, ack in
 }
 ```
 
+## Options
+
+- `host` - String, the host to connect
+- `log` - Bool, whether to print SocketIO logs or not
+- `auth` - Dictionary, authorization options
+
 ## Documentation
 
 See [full Echo documentation](https://laravel.com/docs/5.5/broadcasting) for all available methods
