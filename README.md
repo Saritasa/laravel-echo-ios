@@ -1,8 +1,6 @@
 # Laravel Echo IOS
 
-This project is initially done by [Bubbleflat : find your perfect roommate and flatsharing](https://bubbleflat.com)
-
-Current project is a fork.
+This project is a fork of a project initially done by [Bubbleflat : find your perfect roommate and flatsharing](https://bubbleflat.com)
 
 This project is wrapper to use [Laravel Echo](https://github.com/laravel/echo) in Swift IOS project
 
