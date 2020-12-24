@@ -97,9 +97,9 @@ class SocketIoChannel: Channel {
     ///   - callback: callback
     func on(event: String, callback: @escaping NormalCallback){
 
-        func listener(data: [Any], ack: SocketAckEmitter){
+        let listener: NormalCallback = { [weak self] data, ack in
             if let channel = data[0] as? String {
-                if(self.name == channel){
+                if self?.name == channel {
                     callback(data, ack)
                 }
             }
@@ -113,8 +113,8 @@ class SocketIoChannel: Channel {
     /// Attach a 'reconnect' listener and bind the event.
     func configureReconnector(){
 
-        func listener(event: [Any], _ack: SocketAckEmitter){
-            self.subscribe()
+        let listener: NormalCallback = { [weak self] _, _ in
+            self?.subscribe()
         }
 
         self.socket.on("reconnect", callback: listener)
