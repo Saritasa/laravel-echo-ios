@@ -46,7 +46,8 @@ class SocketIOConnector: IConnector {
     /// Create a fresh Socket.io connection.
     func connect(){
         if let url = URL(string: self.options["host"] as? String ?? "") {
-            let socketConfig: SocketIOClientConfiguration = [.log(true), .compress]
+            let log = options["log"] as? Bool ?? true
+            let socketConfig: SocketIOClientConfiguration = [.log(log), .compress]
             self.socketManager = SocketManager(socketURL: url, config: socketConfig)
             self.socketManager?.defaultSocket.connect(timeoutAfter: 5, withHandler: {
                 print("ERROR")
