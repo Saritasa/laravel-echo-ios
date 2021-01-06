@@ -25,6 +25,10 @@ public class Echo {
         connector = SocketIOConnector(options: self.options)
     }
 
+    deinit {
+        disconnect()
+    }
+
     /// Create a connection to a socket.
     ///
     /// - Parameter callback: a callback when connection is made.
