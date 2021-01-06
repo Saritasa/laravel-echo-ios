@@ -10,7 +10,6 @@ import SocketIO
 
 /// This class represents a basic channel protocol.
 public protocol IChannel {
-    
     /// Listen for an event on the channel instance.
     ///
     /// - Parameters:
@@ -18,7 +17,7 @@ public protocol IChannel {
     ///   - callback: callback
     /// - Returns: the channel itself
     func listen(event: String, callback: @escaping NormalCallback) -> IChannel
-    
+
     /// Listen for an event on the channel instance.
     ///
     /// - Parameter callback: callback
@@ -38,5 +37,4 @@ public protocol IChannel {
 
     /// Subscribe to a Socket.io channel.
     func subscribe()
-    
 }

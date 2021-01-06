@@ -8,95 +8,82 @@
 import Foundation
 import SocketIO
 
-
 /// This class represents a Socket.io channel.
 class SocketIoChannel: Channel {
-    
-    
     /// The Socket.io client instance.
     var socket: SocketIOClient
-    
-    
+
     /// The name of the channel.
     var name: String
 
-    
     /// Channel auth options.
     var auth: [String: Any]
-    
-    
+
     /// The event formatter.
     var eventFormatter: EventFormatter
-    
-    
-    /// The event callbacks applied to the channel.
-    var events : [String: [NormalCallback]]
 
-    
+    /// The event callbacks applied to the channel.
+    var events: [String: [NormalCallback]]
+
     /// Create a new class instance.
     ///
     /// - Parameters:
     ///   - socket: the socket instance
     ///   - name: the channel name
     ///   - options: options for the channel
-    init(socket: SocketIOClient, name: String, options: [String: Any]){
+    init(socket: SocketIOClient, name: String, options: [String: Any]) {
         self.name = name
         self.socket = socket
-        self.events = [:]
+        events = [:]
 
         var namespace = ""
-        if let wrapperNamespace = options["namespace"] as? String{
+        if let wrapperNamespace = options["namespace"] as? String {
             namespace = wrapperNamespace
         }
 
-        self.auth = [:]
-        if let wrapperAuth = options["auth"] as? [String: Any]{
-            self.auth = wrapperAuth
+        auth = [:]
+        if let wrapperAuth = options["auth"] as? [String: Any] {
+            auth = wrapperAuth
         }
 
-        self.eventFormatter = EventFormatter(namespace: namespace)
+        eventFormatter = EventFormatter(namespace: namespace)
 
         super.init(options: options)
 
-        self.subscribe()
-        self.configureReconnector()
+        subscribe()
+        configureReconnector()
     }
 
-    
     /// Subscribe to a Socket.io channel.
-    override func subscribe(){
-        let data = [["channel": self.name, "auth": self.auth]]
-        self.socket.emit("subscribe", with : data)
+    override func subscribe() {
+        let data = [["channel": name, "auth": auth]]
+        socket.emit("subscribe", with: data)
     }
 
-    
     /// Unsubscribe from channel and ubind event callbacks.
-    override func unsubscribe(){
-        self.unbind()
-        let data = [["channel": self.name, "auth": self.auth]]
-        self.socket.emit("unsubscribe", with: data)
+    override func unsubscribe() {
+        unbind()
+        let data = [["channel": name, "auth": auth]]
+        socket.emit("unsubscribe", with: data)
     }
 
-    
     /// Listen for an event on the channel instance.
     ///
     /// - Parameters:
     ///   - event: event name
     ///   - callback: callback
     /// - Returns: the channel itself
-    override func listen(event: String, callback: @escaping NormalCallback) -> IChannel{
-        self.on(event: self.eventFormatter.format(event: event), callback: callback)
+    override func listen(event: String, callback: @escaping NormalCallback) -> IChannel {
+        on(event: eventFormatter.format(event: event), callback: callback)
         return self
     }
 
-    
     /// Bind the channel's socket to an event and store the callback.
     ///
     /// - Parameters:
     ///   - event: event name
     ///   - callback: callback
-    func on(event: String, callback: @escaping NormalCallback){
-
+    func on(event: String, callback: @escaping NormalCallback) {
         let listener: NormalCallback = { [weak self] data, ack in
             if let channel = data[0] as? String {
                 if self?.name == channel {
@@ -105,42 +92,37 @@ class SocketIoChannel: Channel {
             }
         }
 
-        self.socket.on(event, callback: listener)
-        self.bind(event: event, callback: listener)
+        socket.on(event, callback: listener)
+        bind(event: event, callback: listener)
     }
 
-    
     /// Attach a 'reconnect' listener and bind the event.
-    func configureReconnector(){
-
+    func configureReconnector() {
         let listener: NormalCallback = { [weak self] _, _ in
             self?.subscribe()
         }
 
-        self.socket.on("reconnect", callback: listener)
-        self.bind(event: "reconnect", callback: listener)
+        socket.on("reconnect", callback: listener)
+        bind(event: "reconnect", callback: listener)
     }
 
-    
     /// Bind the channel's socket to an event and store the callback.
     ///
     /// - Parameters:
     ///   - event: event name
     ///   - callback: callback
-    func bind(event: String, callback: @escaping NormalCallback){
-        if(self.events[event] == nil){
-            self.events[event] = []
+    func bind(event: String, callback: @escaping NormalCallback) {
+        if events[event] == nil {
+            events[event] = []
         }
-        self.events[event]!.append(callback)
+        events[event]!.append(callback)
     }
 
-    
     /// Unbind the channel's socket from all stored event callbacks.
-    func unbind(){
-        for (key, _) in self.events {
-            self.events[key] = nil
+    func unbind() {
+        for (key, _) in events {
+            events[key] = nil
         }
-        self.socket.removeAllHandlers()
+        socket.removeAllHandlers()
     }
-    
 }
