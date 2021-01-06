@@ -8,43 +8,36 @@
 import Foundation
 import SocketIO
 
-
 /// This class represents a basic channel.
 class Channel: IChannel {
-
-    
     /// The Echo options.
     var options: [String: Any]
 
-    
     /// Create new Channel
     ///
     /// - Parameter options: options
-    init (options: [String: Any]){
+    init(options: [String: Any]) {
         self.options = options
     }
 
-    
     /// Listen for an event on the channel instance.
     ///
     /// - Parameters:
     ///   - event: event name
     ///   - callback: callback
     /// - Returns: the channel itself
-    func listen(event: String, callback: @escaping NormalCallback) -> IChannel {
+    func listen(event _: String, callback _: @escaping NormalCallback) -> IChannel {
         return self
     }
 
-    
     /// Listen for an event on the channel instance.
     ///
     /// - Parameter callback: callback
     /// - Returns: the channel itself
     func notification(callback: @escaping NormalCallback) -> IChannel {
-        return self.listen(event: ".Illuminate.Notifications.Events.BroadcastNotificationCreated", callback: callback)
+        return listen(event: ".Illuminate.Notifications.Events.BroadcastNotificationCreated", callback: callback)
     }
 
-    
     /// Listen for a whisper event on the channel instance.
     ///
     /// - Parameters:
@@ -52,19 +45,12 @@ class Channel: IChannel {
     ///   - callback: callback
     /// - Returns: the channel itself
     func listenForWhisper(event: String, callback: @escaping NormalCallback) -> IChannel {
-        return self.listen(event: ".client-" + event, callback: callback)
+        return listen(event: ".client-" + event, callback: callback)
     }
 
-    
     /// Unsubscribe from channel and ubind event callbacks.
-    func unsubscribe(){
+    func unsubscribe() {}
 
-    }
-
-    
     /// Subscribe to a Socket.io channel.
-    func subscribe(){
-
-    }
-
+    func subscribe() {}
 }
