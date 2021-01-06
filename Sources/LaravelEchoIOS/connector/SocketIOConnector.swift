@@ -10,7 +10,7 @@ class SocketIOConnector: IConnector {
     private var socketManager: SocketManagerSpec?
 
     /// Connector options.
-    var options: [String: Any]
+    let options: [String: Any]
 
     /// All of the subscribed channels.
     var channels: [String: IChannel] = [:]

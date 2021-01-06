@@ -14,7 +14,7 @@ public class Echo {
     var connector: IConnector
 
     /// The Echo options.
-    var options: [String: Any]
+    let options: [String: Any]
 
     /// Create a new class instance.
     ///
