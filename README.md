@@ -13,29 +13,32 @@ This module is only supports installation using SPM.
 
 ## Example
 
-First, you need to import the framework :
+Import the framework:
 
 ```Swift
 import LaravelEchoIOS
 ```
 
-Then you can use it like in javascript ( but you need to wait for the socket to be connected )
+Keep a strong reference to the `Echo` instance (for example in your view controller):
 
 ```Swift
-let token = "Auth token"
-let e : Echo = Echo(options: ["host":"http://localhost:6001", "auth": ["headers": ["Authorization": "Bearer " + token]]])
+var echo: Echo?
+```
 
-e.connected(){ data, ack in
+Create `Echo` and connect (wait for connection to add listeners):
 
+```Swift
+echo = Echo(options: ["host":"http://localhost:6001", "auth": ["headers": ["Authorization": "Bearer " + token]]])
+echo?.connect(callback: { [weak self] _, _ in
     print("CONNECTED")
 
-    e.join(channel: "conversation.243").listen(event: ".NewMessage", callback: { data, ack in
-
+    self?.echo?.join(channel: "conversation.243").listen(event: ".NewMessage", callback: { data, ack in
         print(data)
-
     })
-
-}
+}, timeoutHandler: { [weak self] in
+    print("CONNECTION TIMEOUT")
+    self?.echo = nil
+})
 ```
 
 ## Options
@@ -47,22 +50,5 @@ e.connected(){ data, ack in
 ## Documentation
 
 See [full Echo documentation](https://laravel.com/docs/5.5/broadcasting) for all available methods
-
-All callback must been use like this : 
-
-```Swift
-e.connected(){ data, ack in
-
-  // Do something when call
-
-}
-```
-
-Or with a function like this
-
-```Swift
-func listener(data: [Any], ack: SocketAckEmitter)
-```
-
 
 **here, joining, leaving are not available yet**

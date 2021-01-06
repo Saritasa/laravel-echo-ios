@@ -9,41 +9,28 @@ import SocketIO
 class SocketIOConnector: IConnector {
     private var socketManager: SocketManagerSpec?
 
-    /// Default connector options.
-    var _defaultOptions: [String: Any] = ["auth": ["headers": []], "authEndpoint": "/broadcasting/auth", "broadcaster": "socket.io", "host": "", "key": "", "namespace": "App.Events"]
-
     /// Connector options.
-    var options: [String: Any]
+    let options: [String: Any]
 
     /// All of the subscribed channels.
-    var channels: [String: IChannel]
+    var channels: [String: IChannel] = [:]
 
     /// Create a new class instance.
     ///
     /// - Parameter options: options
     init(options: [String: Any]) {
         self.options = options
-        channels = [:]
-        connect()
-    }
-
-    /// Merge the custom options with the defaults.
-    ///
-    /// - Parameter options: options
-    func setOptions(options: [String: Any]) {
-        self.options = mergeOptions(options: options)
     }
 
     /// Create a fresh Socket.io connection.
-    func connect() {
-        if let url = URL(string: options["host"] as? String ?? "") {
-            let log = options["log"] as? Bool ?? true
-            let socketConfig: SocketIOClientConfiguration = [.log(log), .compress]
-            socketManager = SocketManager(socketURL: url, config: socketConfig)
-            socketManager?.defaultSocket.connect(timeoutAfter: 5, withHandler: {
-                print("ERROR")
-            })
+    func connect(timeoutHandler: (() -> Void)?) {
+        guard let url = URL(string: options["host"] as? String ?? "") else {
+            fatalError("The `host` option is required to connect Echo")
         }
+        let log = options["log"] as? Bool ?? true
+        let socketConfig: SocketIOClientConfiguration = [.log(log), .compress]
+        socketManager = SocketManager(socketURL: url, config: socketConfig)
+        socketManager?.defaultSocket.connect(timeoutAfter: 5, withHandler: timeoutHandler)
     }
 
     /// Add other handler type
@@ -131,17 +118,5 @@ class SocketIOConnector: IConnector {
     /// Disconnect from the Echo server.
     func disconnect() {
         socketManager?.defaultSocket.disconnect()
-    }
-
-    /// Merge options with default
-    ///
-    /// - Parameter options: the options
-    /// - Returns: merged options
-    func mergeOptions(options: [String: Any]) -> [String: Any] {
-        var def = _defaultOptions
-        for (k, v) in options {
-            def[k] = v
-        }
-        return def
     }
 }

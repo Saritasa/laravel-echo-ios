@@ -14,7 +14,7 @@ public class Echo {
     var connector: IConnector
 
     /// The Echo options.
-    var options: [String: Any]
+    let options: [String: Any]
 
     /// Create a new class instance.
     ///
@@ -25,11 +25,16 @@ public class Echo {
         connector = SocketIOConnector(options: self.options)
     }
 
-    /// when connected to the socket
+    deinit {
+        disconnect()
+    }
+
+    /// Create a connection to a socket.
     ///
-    /// - Parameter callback: callback
-    public func connected(callback: @escaping NormalCallback) {
-        connector.connect()
+    /// - Parameter callback: a callback when connection is made.
+    /// - Parameter timeoutHandler: a timeout handler when not able to create a connection.
+    public func connect(callback: @escaping NormalCallback, timeoutHandler: (() -> Void)?) {
+        connector.connect(timeoutHandler: timeoutHandler)
         on(event: "connect", callback: callback)
     }
 
