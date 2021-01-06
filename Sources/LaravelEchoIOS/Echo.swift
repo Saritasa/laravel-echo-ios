@@ -25,11 +25,12 @@ public class Echo {
         connector = SocketIOConnector(options: self.options)
     }
 
-    /// when connected to the socket
+    /// Create a connection to a socket.
     ///
-    /// - Parameter callback: callback
-    public func connected(callback: @escaping NormalCallback) {
-        connector.connect()
+    /// - Parameter callback: a callback when connection is made.
+    /// - Parameter timeoutHandler: a timeout handler when not able to create a connection.
+    public func connect(callback: @escaping NormalCallback, timeoutHandler: (() -> Void)?) {
+        connector.connect(timeoutHandler: timeoutHandler)
         on(event: "connect", callback: callback)
     }
 

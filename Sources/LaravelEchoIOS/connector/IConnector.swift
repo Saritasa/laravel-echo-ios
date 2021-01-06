@@ -8,7 +8,7 @@ import SocketIO
 /// Connector protocol
 protocol IConnector {
     /// Create a fresh connection.
-    func connect()
+    func connect(timeoutHandler: (() -> Void)?)
 
     /// Set an event handler
     ///

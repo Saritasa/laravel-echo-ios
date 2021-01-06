@@ -13,26 +13,22 @@ class SocketIOConnector: IConnector {
     var options: [String: Any]
 
     /// All of the subscribed channels.
-    var channels: [String: IChannel]
+    var channels: [String: IChannel] = [:]
 
     /// Create a new class instance.
     ///
     /// - Parameter options: options
     init(options: [String: Any]) {
         self.options = options
-        channels = [:]
-        connect()
     }
 
     /// Create a fresh Socket.io connection.
-    func connect() {
+    func connect(timeoutHandler: (() -> Void)?) {
         if let url = URL(string: options["host"] as? String ?? "") {
             let log = options["log"] as? Bool ?? true
             let socketConfig: SocketIOClientConfiguration = [.log(log), .compress]
             socketManager = SocketManager(socketURL: url, config: socketConfig)
-            socketManager?.defaultSocket.connect(timeoutAfter: 5, withHandler: {
-                print("ERROR")
-            })
+            socketManager?.defaultSocket.connect(timeoutAfter: 5, withHandler: timeoutHandler)
         }
     }
 
