@@ -24,12 +24,13 @@ class SocketIOConnector: IConnector {
 
     /// Create a fresh Socket.io connection.
     func connect(timeoutHandler: (() -> Void)?) {
-        if let url = URL(string: options["host"] as? String ?? "") {
-            let log = options["log"] as? Bool ?? true
-            let socketConfig: SocketIOClientConfiguration = [.log(log), .compress]
-            socketManager = SocketManager(socketURL: url, config: socketConfig)
-            socketManager?.defaultSocket.connect(timeoutAfter: 5, withHandler: timeoutHandler)
+        guard let url = URL(string: options["host"] as? String ?? "") else {
+            fatalError("The `host` option is required to connect Echo")
         }
+        let log = options["log"] as? Bool ?? true
+        let socketConfig: SocketIOClientConfiguration = [.log(log), .compress]
+        socketManager = SocketManager(socketURL: url, config: socketConfig)
+        socketManager?.defaultSocket.connect(timeoutAfter: 5, withHandler: timeoutHandler)
     }
 
     /// Add other handler type
