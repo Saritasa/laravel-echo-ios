@@ -9,9 +9,6 @@ import SocketIO
 class SocketIOConnector: IConnector {
     private var socketManager: SocketManagerSpec?
 
-    /// Default connector options.
-    var _defaultOptions: [String: Any] = ["auth": ["headers": []], "authEndpoint": "/broadcasting/auth", "broadcaster": "socket.io", "host": "", "key": "", "namespace": "App.Events"]
-
     /// Connector options.
     var options: [String: Any]
 
@@ -25,13 +22,6 @@ class SocketIOConnector: IConnector {
         self.options = options
         channels = [:]
         connect()
-    }
-
-    /// Merge the custom options with the defaults.
-    ///
-    /// - Parameter options: options
-    func setOptions(options: [String: Any]) {
-        self.options = mergeOptions(options: options)
     }
 
     /// Create a fresh Socket.io connection.
@@ -131,17 +121,5 @@ class SocketIOConnector: IConnector {
     /// Disconnect from the Echo server.
     func disconnect() {
         socketManager?.defaultSocket.disconnect()
-    }
-
-    /// Merge options with default
-    ///
-    /// - Parameter options: the options
-    /// - Returns: merged options
-    func mergeOptions(options: [String: Any]) -> [String: Any] {
-        var def = _defaultOptions
-        for (k, v) in options {
-            def[k] = v
-        }
-        return def
     }
 }
